@@ -2,22 +2,43 @@ import React from "react";
 import { Typography } from "@mui/material";
 
 import "./styles.css";
-import {useParams} from "react-router-dom";
-
+import { useParams, Link } from "react-router-dom";
+import models from "../../modelData/models";
 /**
  * Define UserPhotos, a React component of Project 4.
  */
-function UserPhotos () {
-    const user = useParams();
-    return (
-      <Typography variant="body1">
-        This should be the UserPhotos view of the PhotoShare app. Since it is
-        invoked from React Router the params from the route will be in property
-        match. So this should show details of user:
-        {user.userId}. You can fetch the model for the user
-        from models.photoOfUserModel(userId):
-      </Typography>
-    );
+import { useState, useEffect } from "react";
+import fetchModel from "../../lib/fetchModelData";
+function UserPhotos() {
+  const { userId } = useParams();
+  // const photosUser = models.photoOfUserModel(userId);
+
+  const [photosUser, setPhotosUser] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchModel("/photosOfUser/" + userId);
+      setPhotosUser(data);
+    };
+    fetchData();
+  }, [userId]);
+  return photosUser.map((photo) => (
+    <div key={photo._id}>
+      <p>{photo.date_time}</p>
+      <img src={`/images/${photo.file_name}`} />
+      {photo.comments &&
+        photo.comments.map((cmt) => (
+          <div key={cmt._id}>
+            <p>{cmt.date_time}</p>
+
+            <Link to={`/users/${cmt.user._id}`}>
+              {cmt.user.first_name} {cmt.user.last_name}
+            </Link>
+
+            <p>{cmt.comment}</p>
+          </div>
+        ))}
+    </div>
+  ));
 }
 
 export default UserPhotos;
