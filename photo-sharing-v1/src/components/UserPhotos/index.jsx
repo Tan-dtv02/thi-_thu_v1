@@ -23,12 +23,12 @@ function UserPhotos() {
   }, [userId]);
   return photosUser.map((photo) => (
     <div key={photo._id}>
-      <p>{photo.date_time}</p>
+      <p>{new Date(photo.date_time).toLocaleString()}</p>
       <img src={`/images/${photo.file_name}`} />
       {photo.comments &&
         photo.comments.map((cmt) => (
           <div key={cmt._id}>
-            <p>{cmt.date_time}</p>
+            <p>{new Date(cmt.date_time).toLocaleString()}</p>
 
             <Link to={`/users/${cmt.user._id}`}>
               {cmt.user.first_name} {cmt.user.last_name}
